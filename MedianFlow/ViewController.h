@@ -9,6 +9,37 @@
 #ifndef __MedianFlow__ViewController__
 #define __MedianFlow__ViewController__
 
-#include <stdio.h>
+#include <iostream>
+#include <vector>
+#include <opencv2/opencv.hpp>
+
+#include "VideoController.h"
+
+using namespace std;
+using namespace cv;
+
+class ViewController
+{
+private:
+    VideoController *videoController;
+    
+    Mat trajectory;
+    
+    string retWindowName;
+    
+public:
+    
+    ViewController();
+    
+    ViewController(VideoController *videoController);
+    
+    ~ViewController();
+    
+    void drawCircles(vector<Point2f> pts, Scalar color = Scalar(30, 30, 230), int radius = 1);
+    
+    void drawLines(vector<Point2f> firstPts, vector<Point2f> secondPts, Scalar color = Scalar(30, 30, 230));
+    
+    void showCurrFrame();
+};
 
 #endif /* defined(__MedianFlow__ViewController__) */
