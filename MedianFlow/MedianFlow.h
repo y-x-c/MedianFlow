@@ -23,7 +23,7 @@ class MedianFlow
 private:
     Mat prevImg, nextImg;
     
-    OpticalFlow *opticalFlow;
+    OpticalFlow *opticalFlow, *opticalFlowSwap;
     ViewController *viewController;
     
     vector<Point2f> generatePts(const Rect_<float> &box);

@@ -45,7 +45,7 @@ public:
     
     OpticalFlow();
     
-    OpticalFlow(const Mat &prevImg, const Mat &nextImg, bool _method = 0);
+    OpticalFlow(const Mat &prevImg, const Mat &nextImg, bool _method = USEOPENCV);
     
     ~OpticalFlow();
     

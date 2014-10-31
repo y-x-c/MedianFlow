@@ -39,7 +39,7 @@ Mat genTestFrame(int x, int y)
 void test()
 {
     //string filename("/Users/Orthocenter/Developments/MedianFlow/5.m4v");
-    string filename("/Users/Orthocenter/Developments/MedianFlow/david.mpg");
+    string filename("/Users/Orthocenter/Developments/MedianFlow/mid.avi");
     VideoController videoController(filename);
     ViewController viewController(&videoController);
     
@@ -115,9 +115,9 @@ void test()
 
 void testMF()
 {
-    string filename("/Users/Orthocenter/Developments/MedianFlow/move.m4v");
-    VideoController videoController(0);
-    //VideoController videoController(filename);
+    string filename("/Users/Orthocenter/Developments/MedianFlow/david.mpg");
+    //VideoController videoController(0);
+    VideoController videoController(filename);
     ViewController viewController(&videoController);
     
     videoController.jumpToFrameNum(0);
@@ -158,8 +158,6 @@ void testMF()
             viewController.drawRect(box);
             viewController.showCache();
         }
-        
-        waitKey(0);
         
         delete &medianFlow;
     }

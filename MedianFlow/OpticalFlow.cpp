@@ -216,7 +216,6 @@ void OpticalFlow::trackPts(vector<Point2f> &pts, vector<Point2f> &retPts)
             retPts.push_back(pt);
         }
     }
-
 }
 
 void OpticalFlow::swapImg()

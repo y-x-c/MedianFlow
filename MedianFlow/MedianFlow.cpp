@@ -29,7 +29,8 @@ MedianFlow::MedianFlow(const Mat &prevImg, const Mat &nextImg)
     this->prevImg.convertTo(this->prevImg, CV_32F);
     this->nextImg.convertTo(this->nextImg, CV_32F);
     
-    opticalFlow = new OpticalFlow(this->prevImg, this->nextImg);
+    opticalFlow = new OpticalFlow(this->prevImg, this->nextImg, OpticalFlow::USEOPENCV);
+    opticalFlowSwap = new OpticalFlow(this->nextImg, this->prevImg, OpticalFlow::USEOPENCV);
 }
 
 MedianFlow::MedianFlow(const Mat &prevImg, const Mat &nextImg, ViewController *_viewController)
@@ -48,6 +49,7 @@ MedianFlow::MedianFlow(const Mat &prevImg, const Mat &nextImg, ViewController *_
     this->nextImg.convertTo(this->nextImg, CV_32F);
     
     opticalFlow = new OpticalFlow(this->prevImg, this->nextImg, OpticalFlow::USEOPENCV);
+    opticalFlowSwap = new OpticalFlow(this->nextImg, this->prevImg, OpticalFlow::USEOPENCV);
     
     viewController = _viewController;
 }
@@ -227,7 +229,6 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
             float ratio = dist1 / dist0;
             
             ratios.push_back(ratio);
-            absDist.push_back(abs(dist1- dist0));
         }
     }
     
@@ -246,9 +247,28 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
     
     cout << ret << endl;
     
+    for(int i = 0; i < size; i++)
+    {
+        if(rejected[i]) continue;
+        
+        float dist = norm(Mat(pts[i]), Mat(FPts[i]));
+        
+        absDist.push_back(dist);
+    }
+
     sort(absDist.begin(), absDist.end());
-    if(absDist[absDist.size() / 2] > 10)
+    
+    int halfSizeAbsDist = (int)absDist.size() / 2;
+    
+    for(auto i : absDist)
+    {
+        i = abs(i - absDist[halfSizeAbsDist]);
+    }
+    
+    sort(absDist.begin(), absDist.end());
+    if(absDist[absDist.size() / 2] > 20)
         valid = false;
+        //valid = true;
     else
         valid = true;
     
