@@ -25,11 +25,14 @@ private:
     
 public:
     
+    bool cameraMode;
+    
     VideoController();
     
     ~VideoController();
     
     VideoController(string &filename);
+    VideoController(int camera = 0);
     
     Mat getCurrFrame();
     Mat getPrevFrame();
@@ -38,6 +41,8 @@ public:
     Size frameSize();
     
     int frameNumber();
+    
+    void jumpToFrameNum(int num);
 };
 
 #endif /* defined(__MedianFlow__VideoController__) */

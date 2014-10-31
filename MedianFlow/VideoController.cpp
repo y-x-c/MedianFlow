@@ -1,4 +1,4 @@
-//
+  //
 //  VideoController.cpp
 //  MedianFlow
 //
@@ -14,11 +14,17 @@ VideoController::~VideoController()
 }
 
 VideoController::VideoController(string &filename):
-    curr(0), frame(0)
+    curr(0), frame(0), cameraMode(false)
 {
     videoCapture = new VideoCapture(filename);
     
     // check if the video file is opened
+}
+
+VideoController::VideoController(int camera):
+    curr(0), frame(0), cameraMode(true)
+{
+    videoCapture = new VideoCapture(camera);
 }
 
 Mat VideoController::getCurrFrame()
@@ -46,4 +52,9 @@ Size VideoController::frameSize()
 int VideoController::frameNumber()
 {
     return frame;
+}
+
+void VideoController::jumpToFrameNum(int num)
+{
+    while(frameNumber() < num) readNextFrame();
 }

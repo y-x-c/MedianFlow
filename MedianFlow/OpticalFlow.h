@@ -21,8 +21,10 @@ class OpticalFlow
 private:
     // Size of the window centered by the traced point.
     // The value must be odd.
-    const static int neighborSize = 37;
+    const static int neighborSize = 5;
     const static int maxLevel = 0; // 0 means no pyramid
+    
+    bool method;
     
     Mat prevImg, nextImg;
     vector<Point2f> prevPts, nextPts;
@@ -30,25 +32,26 @@ private:
     
     bool isInside(const Point2f &pt, int imgWidth, int imgHeight);
     
+    void getIxy(const Mat &img, Mat &ret, int dx, int dy);
+    
     void preprocess();
     Point2f calculate(const Point2f &trackPoint, const Mat &Ix, const Mat &Iy, const Mat &It);
     Point2f calculatePyr(const Point2f &trackPoint);
-    
-protected:
-//debug
-public:
-//end debug
-    virtual vector<Point2f> generateNeighborPts(const Point2f &pt, int imgWidth, int imgHeight);
+
+    vector<Point2f> generateNeighborPts(const Point2f &pt, int imgWidth, int imgHeight);
     
 public:
+    const static bool USEOPENCV = 1;
     
     OpticalFlow();
     
-    OpticalFlow(const Mat &prevImg, const Mat &nextImg);
+    OpticalFlow(const Mat &prevImg, const Mat &nextImg, bool _method = 0);
     
     ~OpticalFlow();
     
     void trackPts(vector<Point2f> &pts, vector<Point2f> &retPts);
+    
+    void swapImg();
 };
 
 #endif /* defined(__MedianFlow__OpticalFlow__) */

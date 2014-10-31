@@ -13,22 +13,54 @@ OpticalFlow::OpticalFlow()
 
 }
 
-OpticalFlow::OpticalFlow(const Mat &prevImg, const Mat &nextImg)
+OpticalFlow::OpticalFlow(const Mat &prevImg, const Mat &nextImg, bool _method)
 {
+    this->method = _method;
+    
     //check image size
     
-    cvtColor(prevImg, this->prevImg, CV_BGR2GRAY);
-    cvtColor(nextImg, this->nextImg, CV_BGR2GRAY);
+    if(prevImg.channels() == 3)
+        cvtColor(prevImg, this->prevImg, CV_BGR2GRAY);
+    else
+        prevImg.copyTo(this->prevImg);
     
-    this->prevImg.convertTo(this->prevImg, CV_32F);
-    this->nextImg.convertTo(this->nextImg, CV_32F);
+    if(prevImg.channels() == 3)
+        cvtColor(nextImg, this->nextImg, CV_BGR2GRAY);
+    else
+        nextImg.copyTo(this->nextImg);
+    
+    this->prevImg.convertTo(this->prevImg, CV_8U);
+    this->nextImg.convertTo(this->nextImg, CV_8U);
 
-    preprocess();
+    if(method != USEOPENCV) preprocess();
 }
 
 OpticalFlow::~OpticalFlow()
 {
 
+}
+
+void OpticalFlow::getIxy(const cv::Mat &img, cv::Mat &ret, int dx, int dy)
+{
+    ret = Mat(img.rows, img.cols, img.type(), Scalar::all(0));
+    
+    for(int r = 0; r < img.rows; r++)
+    {
+        ret.at<float>(r, 0) = img.at<float>(r, 0);
+    }
+    
+    for(int c = 0; c < img.cols; c++)
+    {
+        ret.at<float>(0, c) = img.at<float>(0, c);
+    }
+    
+    for(int r = 1; r < img.rows; r++)
+    {
+        for(int c = 1; c < img.cols; c++)
+        {
+            ret.at<float>(r, c) = img.at<float>(r, c) - img.at<float>(r + dy, c + dx);
+        }
+    }
 }
 
 void OpticalFlow::preprocess()
@@ -45,15 +77,18 @@ void OpticalFlow::preprocess()
 
         //Sobel(prevImgs[i], Ixs[i], -1, 1, 0, 3);
         //Sobel(prevImgs[i], Iys[i], -1, 0, 1, 3);
+        //Ixs[i] /= 8; Iys[i] /= 8;
+        //getIxy(prevImgs[i], Ixs[i], -1, 0);
+        //getIxy(prevImgs[i], Iys[i], 0, -1);
+        
         Scharr(prevImgs[i], Ixs[i], -1, 1, 0);
         Scharr(prevImgs[i], Iys[i], -1, 0, 1);
+        //Ixs[i] /= 32; Iys[i] /= 32;
         
         //cout << "prevImg:\n" << prevImgs[i] << endl;
         //cout << "Ixs:\n" << Ixs[i] << endl;
         
         Its[i] = nextImgs[i] - prevImgs[i];
-    
-        Ixs[i] /= 32; Iys[i] /= 32;
     }
     
     //cout << "Ix:\n" << Ix << endl;
@@ -98,10 +133,11 @@ Point2f OpticalFlow::calculate(const Point2f &trackPoint, const Mat &Ix, const M
     const int imgWidth = Ix.cols;
     const int imgHeight = Ix.rows;
     
-    if(!isInside(trackPoint, imgWidth, imgHeight))
-    {
-        return Point2f(-1, -1);
-    }
+    //if(!isInside(trackPoint, imgWidth, imgHeight))
+    //{
+    //    return Point2f(-1, -1);
+    //}
+    assert(isInside(trackPoint, imgWidth, imgHeight));
     
     vector<Point2f> pts = generateNeighborPts(trackPoint, imgWidth, imgHeight);
     
@@ -115,18 +151,28 @@ Point2f OpticalFlow::calculate(const Point2f &trackPoint, const Mat &Ix, const M
         A.at<float>(i, 1) = Iy.at<float>(pts[i].y, pts[i].x);
 
         b.at<float>(i) =  - It.at<float>(pts[i].y, pts[i].x);
+        
+        // debug
+        cout << pts[i].x << " " << pts[i].y << endl;
+        // end debug
     }
     
     Mat d;
     solve(A, b, d, DECOMP_QR);
     
-    //cout << "A:\n" << A << endl;
-    //cout << "b:\n" << b << endl;
+    cout << "A:\n" << A << endl;
+    cout << "b:\n" << b << endl;
     cout << "d:\n" << d << endl;
     
     float dx = d.at<float>(0), dy = d.at<float>(1);
+    Point2f ret = Point2f(dx + trackPoint.x, dy + trackPoint.y);
+
+    if(!isInside(ret, imgWidth, imgHeight))
+    {
+        return Point2f(-1, -1);
+    }
     
-    return Point2f(dx + trackPoint.x, dy + trackPoint.y);
+    return ret;
 }
 
 Point2f OpticalFlow::calculatePyr(const Point2f &trackPoint)
@@ -150,12 +196,40 @@ Point2f OpticalFlow::calculatePyr(const Point2f &trackPoint)
 
 void OpticalFlow::trackPts(vector<Point2f> &pts, vector<Point2f> &retPts)
 {
-    retPts.clear();
-    for(vector<Point2f>::iterator it = pts.begin(); it != pts.end(); it++)
+    if(method == USEOPENCV)
     {
-        Point2f pt = calculatePyr(*it);
+        vector<uchar> status;
+        vector<float> err;
+        calcOpticalFlowPyrLK(prevImg, nextImg, pts, retPts, status, err, Size(15, 15), 1);
         
-        retPts.push_back(pt);
+        for(int i = 0; i < retPts.size(); i++)
+        {
+            if(status[i] == 0) retPts[i] = Point2f(-1.0, -1.0);
+        }
     }
+    else{
+        retPts.clear();
+        for(vector<Point2f>::iterator it = pts.begin(); it != pts.end(); it++)
+        {
+            Point2f pt = calculatePyr(*it);
+            
+            retPts.push_back(pt);
+        }
+    }
+
 }
 
+void OpticalFlow::swapImg()
+{
+    if(method == USEOPENCV)
+    {
+        swap(prevImg, nextImg);
+    }
+    else{
+        prevImgs.swap(nextImgs);
+        for(int i = 0; i < maxLevel; i++)
+        {
+            Its[i] *= -1;
+        }
+    }
+}

@@ -23,7 +23,7 @@ class ViewController
 private:
     VideoController *videoController;
     
-    Mat trajectory;
+    Mat cache;
     
     string retWindowName;
     
@@ -35,11 +35,19 @@ public:
     
     ~ViewController();
     
-    void drawCircles(vector<Point2f> pts, Scalar color = Scalar(30, 30, 230), int radius = 1);
+    void drawCircles(const vector<Point2f> &pts, Scalar color = Scalar(255, 255, 255), int radius = 3);
     
-    void drawLines(vector<Point2f> firstPts, vector<Point2f> secondPts, Scalar color = Scalar(30, 30, 230));
+    void drawLines(const vector<Point2f> &firstPts, const vector<Point2f> &secondPts, Scalar color = Scalar(78, 86, 255));
     
-    void showCurrFrame();
+    void showCurrFrame(const string &winName = string());
+    
+    void drawRect(const Rect &rect);
+    
+    Rect getRect();
+    
+    static void onMouse(int event, int x, int y, int, void *);
+    
+    void refreshCache();
 };
 
 #endif /* defined(__MedianFlow__ViewController__) */

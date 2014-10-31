@@ -25,6 +25,7 @@
 		B927831A19E3D1DB00F59D6D /* libopencv_core.2.4.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B927830819E3D1DB00F59D6D /* libopencv_core.2.4.9.dylib */; };
 		B927831B19E3D1DB00F59D6D /* libopencv_contrib.2.4.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B927830919E3D1DB00F59D6D /* libopencv_contrib.2.4.9.dylib */; };
 		B927831C19E3D1DB00F59D6D /* libopencv_calib3d.2.4.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B927830A19E3D1DB00F59D6D /* libopencv_calib3d.2.4.9.dylib */; };
+		B9C3F0731A00A0BB005D106D /* MedianFlow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9C3F0711A00A0BB005D106D /* MedianFlow.cpp */; };
 		B9DFB93719EEB19F002D77CA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9DFB93619EEB19F002D77CA /* main.cpp */; };
 		B9DFB93C19EEB227002D77CA /* OpticalFlow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9DFB93A19EEB227002D77CA /* OpticalFlow.cpp */; };
 		B9DFB93F19EFA9B1002D77CA /* VideoController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9DFB93D19EFA9B1002D77CA /* VideoController.cpp */; };
@@ -63,6 +64,8 @@
 		B927830819E3D1DB00F59D6D /* libopencv_core.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.9.dylib; path = /usr/local/Cellar/opencv/2.4.9/lib/libopencv_core.2.4.9.dylib; sourceTree = "<absolute>"; };
 		B927830919E3D1DB00F59D6D /* libopencv_contrib.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_contrib.2.4.9.dylib; path = /usr/local/Cellar/opencv/2.4.9/lib/libopencv_contrib.2.4.9.dylib; sourceTree = "<absolute>"; };
 		B927830A19E3D1DB00F59D6D /* libopencv_calib3d.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.9.dylib; path = /usr/local/Cellar/opencv/2.4.9/lib/libopencv_calib3d.2.4.9.dylib; sourceTree = "<absolute>"; };
+		B9C3F0711A00A0BB005D106D /* MedianFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MedianFlow.cpp; sourceTree = "<group>"; };
+		B9C3F0721A00A0BB005D106D /* MedianFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedianFlow.h; sourceTree = "<group>"; };
 		B9DFB93619EEB19F002D77CA /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B9DFB93A19EEB227002D77CA /* OpticalFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpticalFlow.cpp; sourceTree = "<group>"; };
 		B9DFB93B19EEB227002D77CA /* OpticalFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpticalFlow.h; sourceTree = "<group>"; };
@@ -122,6 +125,8 @@
 		B92782F119E3CF8B00F59D6D /* MedianFlow */ = {
 			isa = PBXGroup;
 			children = (
+				B9C3F0711A00A0BB005D106D /* MedianFlow.cpp */,
+				B9C3F0721A00A0BB005D106D /* MedianFlow.h */,
 				B9DFB93619EEB19F002D77CA /* main.cpp */,
 				B9DFB93D19EFA9B1002D77CA /* VideoController.cpp */,
 				B9DFB93E19EFA9B1002D77CA /* VideoController.h */,
@@ -222,6 +227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9C3F0731A00A0BB005D106D /* MedianFlow.cpp in Sources */,
 				B9DFB93F19EFA9B1002D77CA /* VideoController.cpp in Sources */,
 				B9DFB93C19EEB227002D77CA /* OpticalFlow.cpp in Sources */,
 				B9DFB94219EFA9BD002D77CA /* ViewController.cpp in Sources */,
