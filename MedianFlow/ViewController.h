@@ -35,15 +35,15 @@ public:
     
     ~ViewController();
     
-    void drawCircles(const vector<Point2f> &pts, Scalar color = Scalar(255, 255, 255), int radius = 3);
+    void drawCircles(const vector<Point2i> &pts, Scalar color = Scalar(255, 255, 255), int radius = 3);
     
-    void drawLines(const vector<Point2f> &firstPts, const vector<Point2f> &secondPts, Scalar color = Scalar(78, 86, 255));
+    void drawLines(const vector<Point2i> &firstPts, const vector<Point2i> &secondPts, Scalar color = Scalar(78, 86, 255));
     
     void showCache(const string &winName = string());
     
-    void drawRect(const Rect &rect);
+    void drawRect(const Rect_<int> &rect);
     
-    Rect getRect();
+    Rect_<int> getRect();
     
     static void onMouse(int event, int x, int y, int, void *);
     

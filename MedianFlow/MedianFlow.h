@@ -26,14 +26,14 @@ private:
     OpticalFlow *opticalFlow, *opticalFlowSwap;
     ViewController *viewController;
     
-    vector<Point2f> generatePts(const Rect_<float> &box);
+    vector<Point2i> generatePts(const Rect_<int> &box);
     
     double calcNCC(const Mat &img0, const Mat &img1);
     
-    void filterFB(const vector<Point2f> &initialPts, const vector<Point2f> &FBPts, vector<bool> &rejected);
-    void filterNCC(const vector<Point2f> &initialPts, const vector<Point2f> &FPts, vector<bool> &rejected);
+    void filterFB(const vector<Point2i> &initialPts, const vector<Point2i> &FBPts, vector<bool> &rejected);
+    void filterNCC(const vector<Point2i> &initialPts, const vector<Point2i> &FPts, vector<bool> &rejected);
     
-    Rect_<float> calcRect(const Rect_<float> &rect, const vector<Point2f> &pts, const vector<Point2f> &FPts, const vector<bool> &rejected, bool &valid);
+    Rect_<int> calcRect(const Rect_<int> &rect, const vector<Point2i> &pts, const vector<Point2i> &FPts, const vector<bool> &rejected, bool &valid);
     
 public:
     
@@ -45,10 +45,9 @@ public:
     
     static bool compare(const pair<float, int> &a, const pair<float, int> &b);
     
-    
     static const int MEDIANFLOW_TRACK_SUCCESS = 0;
     static const int MEDIANFLOW_TRACK_FAILURE = -1;
-    Rect_<float> trackBox(const Rect_<float> &inputBox, int &status);
+    Rect_<int> trackBox(const Rect_<int> &inputBox, int &status);
 };
 
 #endif /* defined(__MedianFlow__MedianFlow__) */

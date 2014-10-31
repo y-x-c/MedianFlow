@@ -60,24 +60,24 @@ MedianFlow::~MedianFlow()
     opticalFlow = NULL;
 }
 
-vector<Point2f> MedianFlow::generatePts(const Rect_<float> &_box)
+vector<Point2i> MedianFlow::generatePts(const Rect_<int> &_box)
 {
-    Point2f tl(max(0.0f, _box.tl().x), max(0.0f, _box.tl().y));
-    Point2f br(min(float(prevImg.cols), _box.br().x), min(float(prevImg.rows), _box.br().y));
-    Rect_<float> box(tl, br);
+    Point2i tl(max(0, _box.tl().x), max(0, _box.tl().y));
+    Point2i br(min(prevImg.cols, _box.br().x), min(prevImg.rows, _box.br().y));
+    Rect_<int> box(tl, br);
     
-    float stepX = (box.width - 2 * 4) / 9;
-    float stepY = (box.height - 2 * 4) / 9;
+    float stepX = (float)(box.width - 2 * 4) / 9;
+    float stepY = (float)(box.height - 2 * 4) / 9;
     int x0 = box.x + 4;
     int y0 = box.y + 4;
     
-    vector<Point2f> ret;
+    vector<Point2i> ret;
     
     for(int fx = 0; fx < 10; fx++)
     {
         for(int fy = 0; fy < 10; fy++)
         {
-            ret.push_back(Point2f(x0 + fx * stepX, y0 + fy * stepY));
+            ret.push_back(Point2i(x0 + fx * stepX, y0 + fy * stepY));
         }
     }
     
@@ -90,14 +90,14 @@ bool MedianFlow::compare(const pair<float, int> &a, const pair<float, int> &b)
     return a.first < b.first;
 }
 
-void MedianFlow::filterFB(const vector<Point2f> &initialPts, const vector<Point2f> &FBPts, vector<bool> &rejected)
+void MedianFlow::filterFB(const vector<Point2i> &initialPts, const vector<Point2i> &FBPts, vector<bool> &rejected)
 {
     int size = int(initialPts.size());
     vector<pair<float, int> > V;
     
     for(int i = 0; i < size; i++)
     {
-        if(initialPts[i] == Point2f(-1, -1) || FBPts[i] == Point2f(-1, -1)){
+        if(initialPts[i] == Point2i(-1, -1) || FBPts[i] == Point2i(-1, -1)){
             rejected[i] = true;
             continue;
         }
@@ -130,7 +130,7 @@ double MedianFlow::calcNCC(const cv::Mat &img0, const cv::Mat &img1)
     
     Mat v01 = vImg0.t() * vImg1;
     
-    double norm0, norm1;
+    float norm0, norm1;
     
     norm0 = norm(vImg0);
     norm1 = norm(vImg1);
@@ -138,23 +138,23 @@ double MedianFlow::calcNCC(const cv::Mat &img0, const cv::Mat &img1)
     return abs(v01.at<float>(0)) / norm0 / norm1;
 }
 
-void MedianFlow::filterNCC(const vector<Point2f> &initialPts, const vector<Point2f> &FPts, vector<bool> &rejected)
+void MedianFlow::filterNCC(const vector<Point2i> &initialPts, const vector<Point2i> &FPts, vector<bool> &rejected)
 {
     int size = int(initialPts.size());
     vector<pair<float, int> > V;
     
     for(int i = 0; i < size; i++)
     {
-        if(initialPts[i] == Point2f(-1, -1) || FPts[i] == Point2f(-1, -1)) continue;
+        if(initialPts[i] == Point2i(-1, -1) || FPts[i] == Point2i(-1, -1)) continue;
         
         if(initialPts[i].x < 4 || initialPts[i].y < 4 || initialPts[i].x + 4 > prevImg.cols || initialPts[i].y + 4 > prevImg.rows) continue;
         if(FPts[i].x < 4 || FPts[i].y < 4 || FPts[i].x + 4 > prevImg.cols || FPts[i].y + 4 > prevImg.rows) continue;
         
-        Point2f win(4.0, 4.0);
-        Rect rect0(initialPts[i] - win, initialPts[i] + win);
-        Rect rect1(FPts[i] - win, FPts[i] + win);
+        Point2i win(4, 4);
+        Rect_<int> rect0(initialPts[i] - win, initialPts[i] + win);
+        Rect_<int> rect1(FPts[i] - win, FPts[i] + win);
         
-        double ncc = calcNCC(this->prevImg(rect0), this->nextImg(rect1));
+        float ncc = calcNCC(this->prevImg(rect0), this->nextImg(rect1));
         
         V.push_back(make_pair(ncc, i));
     }
@@ -186,11 +186,11 @@ void MedianFlow::filterNCC(const vector<Point2f> &initialPts, const vector<Point
     cout << "NCC filter out " << count << endl;
 }
 
-Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f> &pts, const vector<Point2f> &FPts, const vector<bool> &rejected, bool &valid)
+Rect_<int> MedianFlow::calcRect(const Rect_<int> &rect, const vector<Point2i> &pts, const vector<Point2i> &FPts, const vector<bool> &rejected, bool &valid)
 {
     const int size = int(pts.size());
     
-    vector<float> dxs, dys;
+    vector<int> dxs, dys;
     
     for(int i = 0; i < size; i++)
     {
@@ -203,15 +203,15 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
     if(dxs.size() <= 1)
     {
         valid = false;
-        return Rect_<float>();
+        return Rect_<int>();
     }
     
     sort(dxs.begin(), dxs.end());
     sort(dys.begin(), dys.end());
     
-    float dx = dxs[dxs.size() / 2];
-    float dy = dys[dys.size() / 2];
-    Point2f delta(dx, dy);
+    int dx = dxs[dxs.size() / 2];
+    int dy = dys[dys.size() / 2];
+    Point_<int> delta(dx, dy);
     
     vector<float> ratios;
     vector<float> absDist;
@@ -234,14 +234,14 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
     
     sort(ratios.begin(), ratios.end());
     float ratio = ratios[ratios.size() / 2];
-
-    Rect_<float> ret(delta + rect.tl(), delta + rect.br());
     
-    Point2f center((ret.tl().x + ret.br().x) / 2, (ret.tl().y + ret.br().y) / 2);
-    Point2d tl(center.x - ret.width / 2 * ratio, center.y - ret.height / 2 * ratio);
-    Point2d br(center.x + ret.width / 2 * ratio, center.y + ret.height / 2 * ratio);
+    Rect_<int> ret(delta + rect.tl(), delta + rect.br());
     
-    ret = Rect_<float>(tl, br);
+    Point2f center((float)(ret.tl().x + ret.br().x) / 2, (float)(ret.tl().y + ret.br().y) / 2);
+    Point2i tl(center.x - ret.width / 2 * ratio, center.y - ret.height / 2 * ratio);
+    Point2i br(center.x + ret.width / 2 * ratio, center.y + ret.height / 2 * ratio);
+    
+    ret = Rect_<int>(tl, br);
     
     //ret = Rect_<float>(tl, Size2f(rect.width * ratio, rect.height * ratio));
     
@@ -266,7 +266,7 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
     }
     
     sort(absDist.begin(), absDist.end());
-    if(absDist[absDist.size() / 2] > 20)
+    if(absDist[halfSizeAbsDist] > 20)
         valid = false;
         //valid = true;
     else
@@ -275,40 +275,26 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
     return ret;
 }
 
-Rect_<float> MedianFlow::trackBox(const Rect_<float> &inputBox, int &status)
+Rect_<int> MedianFlow::trackBox(const Rect_<int> &inputBox, int &status)
 {
     // size of the inputBox is assumed to be larger than (10 + 4 * 2) * (10 + 4 * 2)
     //assert(inputBox.width >= 10 + 4 * 2 && inputBox.height >= 10 + 4 * 2);
     //if(inputBox.width >= 10 + 4 * 2 && inputBox.height >= 10 + 4 * 2) return inputBox;
     
-    vector<Point2f> pts = generatePts(inputBox);
+    vector<Point2i> pts = generatePts(inputBox);
     
-    vector<Point2f> retF, retFB;
+    vector<Point2i> retF, retFB;
     
     opticalFlow->trackPts(pts, retF);
-    
-    // debug
-    //viewController->drawCircles(pts, Scalar(233, 33, 233), 2);
-    //viewController->drawLines(pts, retF);
-    //viewController->showCurrFrame();
-    //waitKey();
-    // end debug
-    
-    opticalFlow->swapImg();
-    opticalFlow->trackPts(retF, retFB);
+    opticalFlowSwap->trackPts(retF, retFB);
 
-    // debug
-    //viewController->drawLines(pts, retF, Scalar(239, 123, 34));
-    //viewController->showCurrFrame();
-    // end debug
-    
     vector<bool> rejected(10 * 10);
     
     filterFB(pts, retFB, rejected);
     filterNCC(pts, retF, rejected);
     
     // debug
-    vector<Point2f> rPts, rPts2, rPts3;
+    vector<Point2i> rPts, rPts2, rPts3;
     for(int i = 0; i < pts.size(); i++)
     {
         if(rejected[i]) continue;
@@ -324,7 +310,7 @@ Rect_<float> MedianFlow::trackBox(const Rect_<float> &inputBox, int &status)
     cout << "after filter:" << rPts.size() << endl;
     // end debug
     
-    Rect_<float> ret;
+    Rect_<int> ret;
     
     bool valid;
     ret = calcRect(inputBox, pts, retF, rejected, valid);
@@ -336,7 +322,7 @@ Rect_<float> MedianFlow::trackBox(const Rect_<float> &inputBox, int &status)
         cout << "tracking failed" << endl;
         
         status = MEDIANFLOW_TRACK_FAILURE;
-        return Rect_<float>(Point2f(-1, -1), Point2f(-1, -1));
+        return Rect_<int>(Point2i(-1, -1), Point2i(-1, -1));
     }
     
     status = MEDIANFLOW_TRACK_SUCCESS;

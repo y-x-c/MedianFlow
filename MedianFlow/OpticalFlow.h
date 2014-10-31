@@ -27,7 +27,6 @@ private:
     bool method;
     
     Mat prevImg, nextImg;
-    vector<Point2f> prevPts, nextPts;
     vector<Mat> prevImgs, nextImgs, Ixs, Iys, Its;
     
     bool isInside(const Point2f &pt, int imgWidth, int imgHeight);
@@ -49,7 +48,7 @@ public:
     
     ~OpticalFlow();
     
-    void trackPts(vector<Point2f> &pts, vector<Point2f> &retPts);
+    void trackPts(vector<Point2i> &pts, vector<Point2i> &retPts);
     
     void swapImg();
 };

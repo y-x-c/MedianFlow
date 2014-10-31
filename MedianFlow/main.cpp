@@ -46,9 +46,9 @@ void test()
     videoController.readNextFrame();
     
     int curr = 0;
-    vector<Point2f> pts[2];
+    vector<Point2i> pts[2];
     //
-    vector<Point2f> groundTruth_pts[2];
+    vector<Point2i> groundTruth_pts[2];
                 pts[0].push_back(Point2f(40, 40)); // 33 33
     for(int i = 0; i < 0; i++)
     {
@@ -115,7 +115,7 @@ void test()
 
 void testMF()
 {
-    string filename("/Users/Orthocenter/Developments/MedianFlow/david.mpg");
+    string filename("/Users/Orthocenter/Developments/MedianFlow/car.mpg");
     //VideoController videoController(0);
     VideoController videoController(filename);
     ViewController viewController(&videoController);
@@ -123,7 +123,7 @@ void testMF()
     videoController.jumpToFrameNum(0);
     
     videoController.readNextFrame();
-    Rect_<float> box = viewController.getRect();
+    Rect_<int> box = viewController.getRect();
     
     viewController.refreshCache();
     viewController.drawRect(box);

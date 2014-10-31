@@ -194,24 +194,31 @@ Point2f OpticalFlow::calculatePyr(const Point2f &trackPoint)
     return resPoint;
 }
 
-void OpticalFlow::trackPts(vector<Point2f> &pts, vector<Point2f> &retPts)
+void OpticalFlow::trackPts(vector<Point2i> &pts, vector<Point2i> &retPts)
 {
     if(method == USEOPENCV)
     {
         vector<uchar> status;
         vector<float> err;
-        calcOpticalFlowPyrLK(prevImg, nextImg, pts, retPts, status, err, Size(15, 15), 1);
+        vector<Point2f> _pts, _retPts;
+        
+        for(auto i : pts) _pts.push_back(i);
+        
+        calcOpticalFlowPyrLK(prevImg, nextImg, _pts, _retPts, status, err, Size(15, 15), 1);
+        
+        retPts.clear();
+        for(auto i : _retPts) retPts.push_back(i);
         
         for(int i = 0; i < retPts.size(); i++)
         {
-            if(status[i] == 0) retPts[i] = Point2f(-1.0, -1.0);
+            if(status[i] == 0) retPts[i] = Point2i(-1.0, -1.0);
         }
     }
     else{
         retPts.clear();
-        for(vector<Point2f>::iterator it = pts.begin(); it != pts.end(); it++)
+        for(auto it : retPts)
         {
-            Point2f pt = calculatePyr(*it);
+            Point2i pt = calculatePyr(it);
             
             retPts.push_back(pt);
         }
