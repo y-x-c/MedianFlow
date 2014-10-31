@@ -45,7 +45,7 @@ void ViewController::drawCircles(const vector<Point2f> &pts, Scalar color, int r
     }
 }
 
-void ViewController::showCurrFrame(const string &winName)
+void ViewController::showCache(const string &winName)
 {
     if(winName.size())
         imshow(winName, cache);
@@ -68,22 +68,38 @@ void ViewController::onMouse(int event, int x, int y, int flags, void* param)
     bool &selectDone = *((bool*)pp.second);
     Rect &rect = *((Rect*)p.first);
     ViewController &viewController = *((ViewController*)p.second);
+    int width = viewController.videoController->getCurrFrame().cols;
+    int height = viewController.videoController->getCurrFrame().rows;
+    
     
     if(event == CV_EVENT_LBUTTONDOWN)
     {
+        selectDone = false;
         rect = Rect(Point2d(x, y), rect.br());
-        cout << rect << endl;
     }
     
-    if(event == CV_EVENT_LBUTTONUP || (flags == CV_EVENT_FLAG_LBUTTON && event != CV_EVENT_LBUTTONDOWN))
+    if(flags == CV_EVENT_FLAG_LBUTTON && event != CV_EVENT_LBUTTONDOWN)
     {
         rect = Rect(rect.tl(), Point2d(x, y));
         viewController.refreshCache();
         viewController.drawRect(rect);
-        viewController.showCurrFrame(string("Median Flow"));
+        viewController.showCache(string("Median Flow"));
         
-        if(event == CV_EVENT_LBUTTONUP){
+        if(rect.width >= 10 + 4 * 2 && rect.height >= 10 + 4 * 2 && rect.width <= width && rect.height <= height)
+        {
             selectDone = true;
+        }
+    }
+    
+    if(event == CV_EVENT_LBUTTONUP)
+    {
+        if(rect.width >= 10 + 4 * 2 && rect.height >= 10 + 4 * 2 && rect.width <= width && rect.height <= height)
+        {
+            selectDone = true;
+        }
+        else
+        {
+            rect = Rect(Point2f(-1, -1), Point2f(width + 1, height + 1));
         }
     }
 }
@@ -93,6 +109,7 @@ Rect ViewController::getRect()
     namedWindow("Median Flow", CV_WINDOW_AUTOSIZE);
     
     imshow("Median Flow", videoController->getCurrFrame());
+    
     
     int width = videoController->getCurrFrame().cols;
     int height = videoController->getCurrFrame().rows;
@@ -104,23 +121,23 @@ Rect ViewController::getRect()
     
     pair<pair<void*, void*>, bool*> pp(p, &selectDone);
     
-    bool flag = false;
-    
     setMouseCallback("Median Flow", ViewController::onMouse, &pp);
     
-    while(!flag)
+    if(videoController->cameraMode)
     {
-        waitKey(1);
-        
-        if(videoController->cameraMode)
+        while(!(selectDone && waitKey(10) != -1))
         {
             refreshCache();
             drawRect(rect);
-            showCurrFrame(string("Median Flow"));
+            showCache(string("Median Flow"));
         }
-        //static int count = 0;
-        //cout << ++count << " " << selectDone << endl;
-        if(selectDone && rect.width >= 10 + 4 * 2 && rect.height >= 10 + 4 * 2 && rect.width <= width && rect.height <= height) flag = true;
+    }
+    else
+    {
+        while(!selectDone)
+        {
+            waitKey();
+        }
     }
     
     destroyWindow("Median Flow");

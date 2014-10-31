@@ -1,4 +1,4 @@
- //
+  //
 //  MedianFlow.cpp
 //  MedianFlow
 //
@@ -198,7 +198,7 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
         dys.push_back(FPts[i].y - pts[i].y);
     }
     
-    if(dxs.size() ==0)
+    if(dxs.size() <= 1)
     {
         valid = false;
         return Rect_<float>();
@@ -244,6 +244,8 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
     
     //ret = Rect_<float>(tl, Size2f(rect.width * ratio, rect.height * ratio));
     
+    cout << ret << endl;
+    
     sort(absDist.begin(), absDist.end());
     if(absDist[absDist.size() / 2] > 10)
         valid = false;
@@ -253,7 +255,7 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
     return ret;
 }
 
-Rect_<float> MedianFlow::trackBox(const Rect_<float> &inputBox)
+Rect_<float> MedianFlow::trackBox(const Rect_<float> &inputBox, int &status)
 {
     // size of the inputBox is assumed to be larger than (10 + 4 * 2) * (10 + 4 * 2)
     //assert(inputBox.width >= 10 + 4 * 2 && inputBox.height >= 10 + 4 * 2);
@@ -309,9 +311,14 @@ Rect_<float> MedianFlow::trackBox(const Rect_<float> &inputBox)
     
     if(!valid)
     {
-        ret = viewController->getRect();
-        cout << "get Rect " << ret << endl;
+        //ret = viewController->getRect();
+        //cout << "get Rect " << ret << endl;
+        cout << "tracking failed" << endl;
+        
+        status = MEDIANFLOW_TRACK_FAILURE;
+        return Rect_<float>(Point2f(-1, -1), Point2f(-1, -1));
     }
     
+    status = MEDIANFLOW_TRACK_SUCCESS;
     return ret;
 }

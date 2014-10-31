@@ -45,7 +45,10 @@ public:
     
     static bool compare(const pair<float, int> &a, const pair<float, int> &b);
     
-    Rect_<float> trackBox(const Rect_<float> &inputBox);
+    
+    static const int MEDIANFLOW_TRACK_SUCCESS = 0;
+    static const int MEDIANFLOW_TRACK_FAILURE = -1;
+    Rect_<float> trackBox(const Rect_<float> &inputBox, int &status);
 };
 
 #endif /* defined(__MedianFlow__MedianFlow__) */

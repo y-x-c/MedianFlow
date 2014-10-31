@@ -39,7 +39,7 @@ Mat genTestFrame(int x, int y)
 void test()
 {
     //string filename("/Users/Orthocenter/Developments/MedianFlow/5.m4v");
-    string filename("/Users/Orthocenter/Developments/MedianFlow/car.mpg");
+    string filename("/Users/Orthocenter/Developments/MedianFlow/david.mpg");
     VideoController videoController(filename);
     ViewController viewController(&videoController);
     
@@ -101,7 +101,7 @@ void test()
         //viewController.drawLines(groundTruth_pts[curr], groundTruth_pts[curr ^ 1], Scalar(255, 255, 255));
         // end debug
         
-        viewController.showCurrFrame();
+        viewController.showCache();
         
         cout << "frame #" << videoController.frameNumber() << endl;
         cout << "pts = " << endl << pts[curr ^ 1] << endl;
@@ -115,18 +115,19 @@ void test()
 
 void testMF()
 {
-    //string filename("/Users/Orthocenter/Developments/MedianFlow/origin.avi");
+    string filename("/Users/Orthocenter/Developments/MedianFlow/move.m4v");
     VideoController videoController(0);
     //VideoController videoController(filename);
     ViewController viewController(&videoController);
     
-    videoController.jumpToFrameNum(20);
+    videoController.jumpToFrameNum(0);
     
     videoController.readNextFrame();
     Rect_<float> box = viewController.getRect();
     
     viewController.refreshCache();
     viewController.drawRect(box);
+    viewController.showCache();
     
     while(videoController.readNextFrame())
     {
@@ -135,12 +136,30 @@ void testMF()
         
         MedianFlow &medianFlow = *(new MedianFlow(videoController.getPrevFrame(), videoController.getCurrFrame(), &viewController));
         
-        box = medianFlow.trackBox(box);
+        int status;
         
-        viewController.drawRect(box);
-        viewController.showCurrFrame();
+        box = medianFlow.trackBox(box, status);
         
-        //waitKey();
+        if(status == MedianFlow::MEDIANFLOW_TRACK_FAILURE)
+        {
+            videoController.readNextFrame();
+            viewController.refreshCache();
+            viewController.showCache();
+            while(waitKey() == 'n')
+            {
+                videoController.readNextFrame();
+                viewController.refreshCache();
+                viewController.showCache();
+            }
+            box = viewController.getRect();
+        }
+        else
+        {
+            viewController.drawRect(box);
+            viewController.showCache();
+        }
+        
+        waitKey(0);
         
         delete &medianFlow;
     }

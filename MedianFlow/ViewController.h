@@ -39,7 +39,7 @@ public:
     
     void drawLines(const vector<Point2f> &firstPts, const vector<Point2f> &secondPts, Scalar color = Scalar(78, 86, 255));
     
-    void showCurrFrame(const string &winName = string());
+    void showCache(const string &winName = string());
     
     void drawRect(const Rect &rect);
     
