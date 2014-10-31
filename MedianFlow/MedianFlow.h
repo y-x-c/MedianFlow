@@ -21,19 +21,27 @@ using namespace cv;
 class MedianFlow
 {
 private:
+    static const int halfPatchSize = 4;
+    static const int nPts = 10;
+    static const int errorDist = 20;
+    
     Mat prevImg, nextImg;
     
     OpticalFlow *opticalFlow, *opticalFlowSwap;
     ViewController *viewController;
     
+    bool isPointInside(const Point2i &pt, const int alpha = 0);
+    bool isBoxUsable(const Rect_<int> &rect);
+    
     vector<Point2i> generatePts(const Rect_<int> &box);
     
     double calcNCC(const Mat &img0, const Mat &img1);
     
-    void filterFB(const vector<Point2i> &initialPts, const vector<Point2i> &FBPts, vector<bool> &rejected);
-    void filterNCC(const vector<Point2i> &initialPts, const vector<Point2i> &FPts, vector<bool> &rejected);
+    void filterOFError(const vector<Point2i> &pts, vector<int> &rejected);
+    void filterFB(const vector<Point2i> &initialPts, const vector<Point2i> &FBPts, vector<int> &rejected);
+    void filterNCC(const vector<Point2i> &initialPts, const vector<Point2i> &FPts, vector<int> &rejected);
     
-    Rect_<int> calcRect(const Rect_<int> &rect, const vector<Point2i> &pts, const vector<Point2i> &FPts, const vector<bool> &rejected, bool &valid);
+    Rect_<int> calcRect(const Rect_<int> &rect, const vector<Point2i> &pts, const vector<Point2i> &FPts, const vector<int> &rejected, int &status);
     
 public:
     
@@ -46,7 +54,12 @@ public:
     static bool compare(const pair<float, int> &a, const pair<float, int> &b);
     
     static const int MEDIANFLOW_TRACK_SUCCESS = 0;
-    static const int MEDIANFLOW_TRACK_FAILURE = -1;
+    static const int MEDIANFLOW_TRACK_F_PTS = -1; // number of points after filtering is too little
+    static const int MEDIANFLOW_TRACK_F_BOX = -2; // box is out of bounds
+    static const int MEDIANFLOW_TRACK_F_CONFUSION = -3; // tracking result is disordered
+    static const int REJECT_OFERROR = 1 << 0;
+    static const int REJECT_NCC = 1 << 1;
+    static const int REJECT_FB = 1 << 2;
     Rect_<int> trackBox(const Rect_<int> &inputBox, int &status);
 };
 

@@ -115,7 +115,7 @@ void test()
 
 void testMF()
 {
-    string filename("/Users/Orthocenter/Developments/MedianFlow/car.mpg");
+    string filename("/Users/Orthocenter/Developments/MedianFlow/me.mov");
     //VideoController videoController(0);
     VideoController videoController(filename);
     ViewController viewController(&videoController);
@@ -140,7 +140,7 @@ void testMF()
         
         box = medianFlow.trackBox(box, status);
         
-        if(status == MedianFlow::MEDIANFLOW_TRACK_FAILURE)
+        if(status != MedianFlow::MEDIANFLOW_TRACK_SUCCESS)
         {
             videoController.readNextFrame();
             viewController.refreshCache();

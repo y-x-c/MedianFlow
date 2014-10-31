@@ -9,6 +9,8 @@
 #ifndef __MedianFlow__OpticalFlow__
 #define __MedianFlow__OpticalFlow__
 
+#define OFError Point2i(-1, -1)
+
 #include <vector>
 #include <iostream>
 #include <opencv2/opencv.hpp>
@@ -40,7 +42,7 @@ private:
     vector<Point2f> generateNeighborPts(const Point2f &pt, int imgWidth, int imgHeight);
     
 public:
-    const static bool USEOPENCV = 1;
+    const static bool USEOPENCV = true;
     
     OpticalFlow();
     

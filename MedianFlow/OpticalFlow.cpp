@@ -211,7 +211,7 @@ void OpticalFlow::trackPts(vector<Point2i> &pts, vector<Point2i> &retPts)
         
         for(int i = 0; i < retPts.size(); i++)
         {
-            if(status[i] == 0) retPts[i] = Point2i(-1.0, -1.0);
+            if(status[i] == 0) retPts[i] = OFError;
         }
     }
     else{
