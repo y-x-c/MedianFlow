@@ -9,7 +9,7 @@
 #ifndef __MedianFlow__OpticalFlow__
 #define __MedianFlow__OpticalFlow__
 
-#define OFError Point2i(-1, -1)
+#define OFError Point2f(-1, -1)
 
 #include <vector>
 #include <iostream>
@@ -50,7 +50,7 @@ public:
     
     ~OpticalFlow();
     
-    void trackPts(vector<Point2i> &pts, vector<Point2i> &retPts);
+    void trackPts(vector<Point2f> &pts, vector<Point2f> &retPts);
     
     void swapImg();
 };

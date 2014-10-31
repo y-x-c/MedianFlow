@@ -30,18 +30,18 @@ private:
     OpticalFlow *opticalFlow, *opticalFlowSwap;
     ViewController *viewController;
     
-    bool isPointInside(const Point2i &pt, const int alpha = 0);
-    bool isBoxUsable(const Rect_<int> &rect);
+    bool isPointInside(const Point2f &pt, const int alpha = 0);
+    bool isBoxUsable(const Rect_<float> &rect);
     
-    vector<Point2i> generatePts(const Rect_<int> &box);
+    vector<Point2f> generatePts(const Rect_<float> &box);
     
     double calcNCC(const Mat &img0, const Mat &img1);
     
-    void filterOFError(const vector<Point2i> &pts, vector<int> &rejected);
-    void filterFB(const vector<Point2i> &initialPts, const vector<Point2i> &FBPts, vector<int> &rejected);
-    void filterNCC(const vector<Point2i> &initialPts, const vector<Point2i> &FPts, vector<int> &rejected);
+    void filterOFError(const vector<Point2f> &pts, vector<int> &rejected);
+    void filterFB(const vector<Point2f> &initialPts, const vector<Point2f> &FBPts, vector<int> &rejected);
+    void filterNCC(const vector<Point2f> &initialPts, const vector<Point2f> &FPts, vector<int> &rejected);
     
-    Rect_<int> calcRect(const Rect_<int> &rect, const vector<Point2i> &pts, const vector<Point2i> &FPts, const vector<int> &rejected, int &status);
+    Rect_<float> calcRect(const Rect_<float> &rect, const vector<Point2f> &pts, const vector<Point2f> &FPts, const vector<int> &rejected, int &status);
     
 public:
     
@@ -60,7 +60,7 @@ public:
     static const int REJECT_OFERROR = 1 << 0;
     static const int REJECT_NCC = 1 << 1;
     static const int REJECT_FB = 1 << 2;
-    Rect_<int> trackBox(const Rect_<int> &inputBox, int &status);
+    Rect_<float> trackBox(const Rect_<float> &inputBox, int &status);
 };
 
 #endif /* defined(__MedianFlow__MedianFlow__) */

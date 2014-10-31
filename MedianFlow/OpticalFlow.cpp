@@ -194,7 +194,7 @@ Point2f OpticalFlow::calculatePyr(const Point2f &trackPoint)
     return resPoint;
 }
 
-void OpticalFlow::trackPts(vector<Point2i> &pts, vector<Point2i> &retPts)
+void OpticalFlow::trackPts(vector<Point2f> &pts, vector<Point2f> &retPts)
 {
     if(method == USEOPENCV)
     {
@@ -218,7 +218,7 @@ void OpticalFlow::trackPts(vector<Point2i> &pts, vector<Point2i> &retPts)
         retPts.clear();
         for(auto it : retPts)
         {
-            Point2i pt = calculatePyr(it);
+            Point2f pt = calculatePyr(it);
             
             retPts.push_back(pt);
         }

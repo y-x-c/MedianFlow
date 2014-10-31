@@ -27,16 +27,16 @@ void ViewController::refreshCache()
     videoController->getCurrFrame().copyTo(cache);
 }
 
-void ViewController::drawLines(const vector<Point2i> &firstPts, const vector<Point2i> &secondPts, Scalar color)
+void ViewController::drawLines(const vector<Point2f> &firstPts, const vector<Point2f> &secondPts, Scalar color)
 {
     for(int i = 0; i < firstPts.size(); i++)
     {
-        if(secondPts[i] == Point2i(-1, -1)) continue;
+        if(secondPts[i] == Point2f(-1, -1)) continue;
         line(cache, firstPts[i], secondPts[i], color);
     }
 }
 
-void ViewController::drawCircles(const vector<Point2i> &pts, Scalar color, int radius)
+void ViewController::drawCircles(const vector<Point2f> &pts, Scalar color, int radius)
 {
     for(int i = 0; i < pts.size(); i++)
     {
@@ -54,7 +54,7 @@ void ViewController::showCache(const string &winName)
     waitKey(1);
 }
 
-void ViewController::drawRect(const Rect &rect)
+void ViewController::drawRect(const Rect_<float> &rect)
 {
     rectangle(cache, rect, Scalar(255, 255, 255));
 }
@@ -65,7 +65,7 @@ void ViewController::onMouse(int event, int x, int y, int flags, void* param)
     pair<void*, void*> p = pp.first;
     
     bool &selectDone = *((bool*)pp.second);
-    Rect_<int> &rect = *((Rect_<int>*)p.first);
+    Rect_<float> &rect = *((Rect_<float>*)p.first);
     ViewController &viewController = *((ViewController*)p.second);
     int width = viewController.videoController->getCurrFrame().cols;
     int height = viewController.videoController->getCurrFrame().rows;
@@ -73,12 +73,12 @@ void ViewController::onMouse(int event, int x, int y, int flags, void* param)
     if(event == CV_EVENT_LBUTTONDOWN)
     {
         selectDone = false;
-        rect = Rect_<int>(Point2i(x, y), rect.br());
+        rect = Rect_<float>(Point2f(x, y), rect.br());
     }
     
     if(flags == CV_EVENT_FLAG_LBUTTON && event != CV_EVENT_LBUTTONDOWN)
     {
-        rect = Rect_<int>(rect.tl(), Point2i(x, y));
+        rect = Rect_<float>(rect.tl(), Point2f(x, y));
         viewController.refreshCache();
         viewController.drawRect(rect);
         viewController.showCache(string("Median Flow"));
@@ -97,12 +97,12 @@ void ViewController::onMouse(int event, int x, int y, int flags, void* param)
         }
         else
         {
-            rect = Rect_<int>(Point2i(-1, -1), Point2i(width + 1, height + 1));
+            rect = Rect_<float>(Point2f(-1, -1), Point2f(width + 1, height + 1));
         }
     }
 }
 
-Rect ViewController::getRect()
+Rect_<float> ViewController::getRect()
 {
     namedWindow("Median Flow", CV_WINDOW_AUTOSIZE);
     
@@ -112,7 +112,7 @@ Rect ViewController::getRect()
     int width = videoController->getCurrFrame().cols;
     int height = videoController->getCurrFrame().rows;
     
-    Rect_<int> rect(Point2i(), Point2i(width + 1, height + 1));
+    Rect_<float> rect(Point2f(), Point2f(width + 1, height + 1));
     pair<void*, void*> p(&rect, this);
     
     bool selectDone = false;
