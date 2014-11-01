@@ -176,9 +176,12 @@ void MedianFlow::filterNCC(const vector<Point2f> &initialPts, const vector<Point
         if(!isPointInside(initialPts[i], halfPatchSize)) continue;
         if(!isPointInside(FPts[i], halfPatchSize)) continue;
         
-        Point2f win(halfPatchSize, halfPatchSize);
-        Rect_<float> rect0(initialPts[i] - win, initialPts[i] + win);
-        Rect_<float> rect1(FPts[i] - win, FPts[i] + win);
+        Point2d win(halfPatchSize, halfPatchSize);
+        Point2d pt1(initialPts[i].x, initialPts[i].y);
+        Point2d pt2(FPts[i].x, FPts[i].y);
+        
+        Rect_<int> rect0(pt1 - win, pt1 + win);
+        Rect_<int> rect1(pt2 - win, pt2 + win);
         
         float ncc = calcNCC(this->prevImg(rect0), this->nextImg(rect1));
         
