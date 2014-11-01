@@ -58,6 +58,9 @@ MedianFlow::~MedianFlow()
 {
     delete opticalFlow;
     opticalFlow = NULL;
+    
+    delete opticalFlowSwap;
+    opticalFlowSwap = NULL;
 }
 
 vector<Point2f> MedianFlow::generatePts(const Rect_<float> &_box)
@@ -180,6 +183,7 @@ void MedianFlow::filterNCC(const vector<Point2f> &initialPts, const vector<Point
         Point2d pt1(initialPts[i].x, initialPts[i].y);
         Point2d pt2(FPts[i].x, FPts[i].y);
         
+        // must be int
         Rect_<int> rect0(pt1 - win, pt1 + win);
         Rect_<int> rect1(pt2 - win, pt2 + win);
         
