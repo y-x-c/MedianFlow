@@ -202,12 +202,7 @@ void OpticalFlow::trackPts(vector<Point2f> &pts, vector<Point2f> &retPts)
         vector<float> err;
         vector<Point2f> _pts, _retPts;
         
-        for(auto i : pts) _pts.push_back(i);
-        
-        calcOpticalFlowPyrLK(prevImg, nextImg, _pts, _retPts, status, err, Size(15, 15), 1);
-        
-        retPts.clear();
-        for(auto i : _retPts) retPts.push_back(i);
+        calcOpticalFlowPyrLK(prevImg, nextImg, pts, retPts, status, err, Size(15, 15), 1);
         
         for(int i = 0; i < retPts.size(); i++)
         {

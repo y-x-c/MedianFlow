@@ -30,7 +30,7 @@ private:
     OpticalFlow *opticalFlow, *opticalFlowSwap;
     ViewController *viewController;
     
-    bool isPointInside(const Point2f &pt, const int alpha = 0);
+    bool isPointInside(const Point2f &pt, const float alpha = 0);
     bool isBoxUsable(const Rect_<float> &rect);
     
     vector<Point2f> generatePts(const Rect_<float> &box);

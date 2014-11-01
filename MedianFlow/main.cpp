@@ -39,7 +39,7 @@ Mat genTestFrame(int x, int y)
 void test()
 {
     //string filename("/Users/Orthocenter/Developments/MedianFlow/5.m4v");
-    string filename("/Users/Orthocenter/Developments/MedianFlow/mid.avi");
+    string filename("/Users/Orthocenter/Developments/MedianFlow/car.mpg");
     VideoController videoController(filename);
     ViewController viewController(&videoController);
     

@@ -90,7 +90,7 @@ bool MedianFlow::compare(const pair<float, int> &a, const pair<float, int> &b)
     return a.first < b.first;
 }
 
-bool MedianFlow::isPointInside(const Point2f &pt, const int alpha)
+bool MedianFlow::isPointInside(const Point2f &pt, const float alpha)
 {
     int width = prevImg.cols, height = prevImg.rows;
     return (pt.x >= 0 + alpha) && (pt.y >= 0 + alpha) && (pt.x <= width - alpha) && (pt.y <= height - alpha);
@@ -99,15 +99,18 @@ bool MedianFlow::isPointInside(const Point2f &pt, const int alpha)
 bool MedianFlow::isBoxUsable(const Rect_<float> &rect)
 {
     bool insideBr = isPointInside(rect.br()), insideTl = isPointInside(rect.tl());
-    if(!insideBr && !insideTl) return false;
+    int width = prevImg.cols, height = prevImg.rows;
+    
+    if(rect.br().x < 0 || rect.br().y < 0 || rect.tl().x > width || rect.tl().y > height)
+        return false;
     
     Rect_<float> _rect(rect);
-    int width = prevImg.cols, height = prevImg.rows;
     
     if(!insideTl) _rect.tl() = Point2f(0, 0);
     if(!insideBr) _rect.br() = Point2f(width, height);
     
-    if(_rect.width < nPts || _rect.height < nPts) return false;
+    if(_rect.width < nPts || _rect.height < nPts)
+        return false;
     
     return true;
 }
@@ -194,7 +197,7 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
 {
     const int size = int(pts.size());
     
-    vector<int> dxs, dys;
+    vector<float> dxs, dys;
     
     for(int i = 0; i < size; i++)
     {
@@ -213,8 +216,8 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
     sort(dxs.begin(), dxs.end());
     sort(dys.begin(), dys.end());
     
-    int dx = dxs[dxs.size() / 2];
-    int dy = dys[dys.size() / 2];
+    float dx = dxs[dxs.size() / 2];
+    float dy = dys[dys.size() / 2];
     Point2f delta(dx, dy);
     
     vector<float> ratios;
@@ -262,15 +265,16 @@ Rect_<float> MedianFlow::calcRect(const Rect_<float> &rect, const vector<Point2f
 
     sort(absDist.begin(), absDist.end());
     
-    int halfSizeAbsDist = (int)absDist.size() / 2;
+    int medianAbsDist = absDist[(int)absDist.size() / 2];
     
-    for(auto i : absDist)
+    for(auto &i : absDist)
+        //caution : must add '&'
     {
-        i = abs(i - absDist[halfSizeAbsDist]);
+        i = abs(i - medianAbsDist);
     }
     
     sort(absDist.begin(), absDist.end());
-    if(absDist[halfSizeAbsDist] > errorDist)
+    if(absDist[(int)absDist.size() / 2] > errorDist)
     {
         status = MEDIANFLOW_TRACK_F_CONFUSION;
         return Rect_<float>();
