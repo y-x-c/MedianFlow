@@ -115,6 +115,8 @@ bool MedianFlow::isBoxUsable(const Rect_<float> &rect)
     if(_rect.width < nPts || _rect.height < nPts)
         return false;
     
+    if(_rect.width > width || _rect.height > height) return false;
+    
     return true;
 }
 

@@ -115,7 +115,7 @@ void test()
 
 void testMF()
 {
-    string filename("/Users/Orthocenter/Developments/MedianFlow/move2.m4v");
+    string filename("/Users/Orthocenter/Developments/MedianFlow/me.mov");
     //VideoController videoController(0);
     VideoController videoController(filename);
     ViewController viewController(&videoController);
