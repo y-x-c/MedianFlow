@@ -156,8 +156,9 @@ double MedianFlow::calcNCC(const cv::Mat &img0, const cv::Mat &img1)
     vImg0 = img0.clone();
     vImg1 = img1.clone();
     
-    vImg0.reshape(0, vImg0.cols * vImg0.rows);
-    vImg1.reshape(0, vImg1.cols * vImg1.rows);
+    // fatal error
+    vImg0 = vImg0.reshape(0, vImg0.cols * vImg0.rows);
+    vImg1 = vImg1.reshape(0, vImg1.cols * vImg1.rows);
     
     Mat v01 = vImg0.t() * vImg1;
     
