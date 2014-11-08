@@ -156,7 +156,7 @@ void testMF()
         }
         else
         {
-            viewController.drawRect(box);
+            viewController.drawRect(box, COLOR_GREEN);
             viewController.showCache();
         }
         

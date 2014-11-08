@@ -338,7 +338,7 @@ TYPE_MF_BB MedianFlow::trackBox(const TYPE_MF_BB &inputBox, int &status)
             rPts2.push_back(retF[i]);
             rPts3.push_back(retFB[i]);
         }
-        viewController->drawCircles(rPts, Scalar(255, 255, 0));
+        viewController->drawCircles(rPts, COLOR_BLUE);
         viewController->drawCircles(rPts2);
         //viewController->drawCircles(rPts3, Scalar(23, 45, 214));
         viewController->drawLines(rPts, rPts2);

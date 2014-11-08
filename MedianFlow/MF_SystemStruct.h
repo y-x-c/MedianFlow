@@ -41,4 +41,12 @@ static const int MF_REJECT_FB = 1 << 2;
 
 static const bool NCC_USE_OPENCV = 0; // 1(lower speed): use matchTemplate(), 0(faster)
 
+static const Scalar COLOR_GREEN = Scalar(156, 188, 26);
+static const Scalar COLOR_BLUE = Scalar(219, 152, 52);
+static const Scalar COLOR_BLACK = Scalar(94, 73, 52);
+static const Scalar COLOR_WHITE = Scalar(241, 240, 236);
+static const Scalar COLOR_YELLOW = Scalar(15, 196, 241);
+static const Scalar COLOR_RED = Scalar(60, 76, 231);
+static const Scalar COLOR_PURPLE = Scalar(182, 89, 155);
+
 #endif

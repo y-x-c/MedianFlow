@@ -27,16 +27,16 @@ void ViewController::refreshCache()
     videoController->getCurrFrame().copyTo(cache);
 }
 
-void ViewController::drawLines(const vector<Point2f> &firstPts, const vector<Point2f> &secondPts, Scalar color)
+void ViewController::drawLines(const vector<Point2f> &firstPts, const vector<Point2f> &secondPts, const Scalar &color, int thickness)
 {
     for(int i = 0; i < firstPts.size(); i++)
     {
         if(secondPts[i] == Point2f(-1, -1)) continue;
-        line(cache, firstPts[i], secondPts[i], color);
+        line(cache, firstPts[i], secondPts[i], color, thickness);
     }
 }
 
-void ViewController::drawCircles(const vector<Point2f> &pts, Scalar color, int radius)
+void ViewController::drawCircles(const vector<Point2f> &pts, const Scalar &color, int radius)
 {
     for(int i = 0; i < pts.size(); i++)
     {
@@ -54,9 +54,9 @@ void ViewController::showCache(const string &winName)
     waitKey(1);
 }
 
-void ViewController::drawRect(const Rect_<float> &rect)
+void ViewController::drawRect(const Rect_<float> &rect, const Scalar &color, int thickness)
 {
-    rectangle(cache, rect, Scalar(255, 255, 255));
+    rectangle(cache, rect, color, thickness);
 }
 
 void ViewController::onMouse(int event, int x, int y, int flags, void* param)
@@ -81,7 +81,7 @@ void ViewController::onMouse(int event, int x, int y, int flags, void* param)
         rect = Rect_<float>(rect.tl(), Point2f(x, y));
         viewController.refreshCache();
         viewController.drawRect(rect);
-        viewController.showCache(string("Median Flow"));
+        viewController.showCache(viewController.retWindowName);
         
         if(rect.width >= 10 + 4 * 2 && rect.height >= 10 + 4 * 2 && rect.width <= width && rect.height <= height)
         {
@@ -104,9 +104,9 @@ void ViewController::onMouse(int event, int x, int y, int flags, void* param)
 
 Rect_<float> ViewController::getRect()
 {
-    namedWindow("Median Flow", CV_WINDOW_AUTOSIZE);
+    namedWindow(retWindowName, CV_WINDOW_AUTOSIZE);
     
-    imshow("Median Flow", videoController->getCurrFrame());
+    imshow(retWindowName, videoController->getCurrFrame());
     
     
     int width = videoController->getCurrFrame().cols;
@@ -119,7 +119,7 @@ Rect_<float> ViewController::getRect()
     
     pair<pair<void*, void*>, bool*> pp(p, &selectDone);
     
-    setMouseCallback("Median Flow", ViewController::onMouse, &pp);
+    setMouseCallback(retWindowName, ViewController::onMouse, &pp);
     
     if(videoController->cameraMode)
     {
@@ -127,7 +127,7 @@ Rect_<float> ViewController::getRect()
         {
             refreshCache();
             drawRect(rect);
-            showCache(string("Median Flow"));
+            showCache(retWindowName);
         }
     }
     else
@@ -138,7 +138,7 @@ Rect_<float> ViewController::getRect()
         }
     }
     
-    destroyWindow("Median Flow");
+    destroyWindow(retWindowName);
     
     return rect;
 }
