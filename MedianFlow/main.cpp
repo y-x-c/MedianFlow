@@ -13,6 +13,7 @@
 #include "ViewController.h"
 #include "OpticalFlow.h"
 #include "MedianFlow.h"
+#include "SystemStruct.h"
 
 using namespace std;
 using namespace cv;
@@ -35,95 +36,95 @@ Mat genTestFrame(int x, int y)
     
     return frame;
 }
-
-void test()
-{
-    //string filename("/Users/Orthocenter/Developments/MedianFlow/5.m4v");
-    string filename("/Users/Orthocenter/Developments/MedianFlow/car.mpg");
-    VideoController videoController(filename);
-    ViewController viewController(&videoController);
-    
-    videoController.readNextFrame();
-    
-    int curr = 0;
-    vector<Point2f> pts[2];
-    //
-    vector<Point2f> groundTruth_pts[2];
-                pts[0].push_back(Point2f(40, 40)); // 33 33
-    for(int i = 0; i < 0; i++)
-    {
-        pts[0].push_back(Point2f(rand() % 320, rand() % 240));
-    }
-    
-    //
-    groundTruth_pts[0] = pts[0];
-    
-    int count = 0;
-    
-    while(videoController.readNextFrame())
-    {
-        //Mat prevFrame = videoController.getPrevFrame(), currFrame = videoController.getCurrFrame();
-        
-        // debug
-        // generate a 1 * 1 block
-        Mat prevFrame = genTestFrame(40, 40 + count * 2);
-        Mat currFrame = genTestFrame(40, 40 + (++count) * 2);
-        // end debug
-        
-        imshow("prev", prevFrame);
-        imshow("curr", currFrame);
-        waitKey(1);
-        
-        OpticalFlow *opticalFlow = new OpticalFlow(prevFrame, currFrame);
-        
-        // debug
-        //vector<Point2f> trackPts = opticalFlow->generateNeighborPts(pts[0][0]);
-        //viewController.drawCircles(trackPts);
-        // end debug
-        
-        opticalFlow->trackPts(pts[curr], pts[curr ^ 1]);
-        
-        delete opticalFlow;
-        
-        //
-        vector<uchar> status;
-        vector<float> err;
-        calcOpticalFlowPyrLK(prevFrame, currFrame, groundTruth_pts[curr], groundTruth_pts[curr ^ 1], status, err, Size(15, 15), 1);
-        
-        Point2f d = pts[curr ^1][0] - pts[curr][0];
-        Point2f gd = groundTruth_pts[curr ^ 1][0] - groundTruth_pts[curr][0];
-        cout << "groudTruth_d=\n" << gd << endl;
-        cout << "gdx / dx = " << gd.x / d.x << endl;
-        
-        viewController.drawLines(pts[curr], pts[curr ^ 1]);
-        
-        // debug
-        //viewController.drawLines(groundTruth_pts[curr], groundTruth_pts[curr ^ 1], Scalar(255, 255, 255));
-        // end debug
-        
-        viewController.showCache();
-        
-        cout << "frame #" << videoController.frameNumber() << endl;
-        cout << "pts = " << endl << pts[curr ^ 1] << endl;
-        cout << "groundTruth_pts = " << endl << groundTruth_pts[curr ^ 1] << endl;
-        
-        waitKey(0);
-        
-        curr ^= 1;
-    }
-}
+//
+//void test()
+//{
+//    //string filename("/Users/Orthocenter/Developments/MedianFlow/5.m4v");
+//    string filename("/Users/Orthocenter/Developments/MedianFlow/car.mpg");
+//    VideoController videoController(filename);
+//    ViewController viewController(&videoController);
+//    
+//    videoController.readNextFrame();
+//    
+//    int curr = 0;
+//    vector<Point2f> pts[2];
+//    //
+//    vector<Point2f> groundTruth_pts[2];
+//                pts[0].push_back(Point2f(40, 40)); // 33 33
+//    for(int i = 0; i < 0; i++)
+//    {
+//        pts[0].push_back(Point2f(rand() % 320, rand() % 240));
+//    }
+//    
+//    //
+//    groundTruth_pts[0] = pts[0];
+//    
+//    int count = 0;
+//    
+//    while(videoController.readNextFrame())
+//    {
+//        //Mat prevFrame = videoController.getPrevFrame(), currFrame = videoController.getCurrFrame();
+//        
+//        // debug
+//        // generate a 1 * 1 block
+//        Mat prevFrame = genTestFrame(40, 40 + count * 2);
+//        Mat currFrame = genTestFrame(40, 40 + (++count) * 2);
+//        // end debug
+//        
+//        imshow("prev", prevFrame);
+//        imshow("curr", currFrame);
+//        waitKey(1);
+//        
+//        OpticalFlow *opticalFlow = new OpticalFlow(prevFrame, currFrame);
+//        
+//        // debug
+//        //vector<Point2f> trackPts = opticalFlow->generateNeighborPts(pts[0][0]);
+//        //viewController.drawCircles(trackPts);
+//        // end debug
+//        
+//        opticalFlow->trackPts(pts[curr], pts[curr ^ 1]);
+//        
+//        delete opticalFlow;
+//        
+//        //
+//        vector<uchar> status;
+//        vector<float> err;
+//        calcOpticalFlowPyrLK(prevFrame, currFrame, groundTruth_pts[curr], groundTruth_pts[curr ^ 1], status, err, Size(15, 15), 1);
+//        
+//        Point2f d = pts[curr ^1][0] - pts[curr][0];
+//        Point2f gd = groundTruth_pts[curr ^ 1][0] - groundTruth_pts[curr][0];
+//        cout << "groudTruth_d=\n" << gd << endl;
+//        cout << "gdx / dx = " << gd.x / d.x << endl;
+//        
+//        viewController.drawLines(pts[curr], pts[curr ^ 1]);
+//        
+//        // debug
+//        //viewController.drawLines(groundTruth_pts[curr], groundTruth_pts[curr ^ 1], Scalar(255, 255, 255));
+//        // end debug
+//        
+//        viewController.showCache();
+//        
+//        cout << "frame #" << videoController.frameNumber() << endl;
+//        cout << "pts = " << endl << pts[curr ^ 1] << endl;
+//        cout << "groundTruth_pts = " << endl << groundTruth_pts[curr ^ 1] << endl;
+//        
+//        waitKey(0);
+//        
+//        curr ^= 1;
+//    }
+//}
 
 void testMF()
 {
-    string filename("/Users/Orthocenter/Developments/MedianFlow/me.mov");
-    //VideoController videoController(0);
+    string filename("/Users/Orthocenter/Developments/MedianFlow/car.mpg");
+    //VideoController videoControll rer(0);
     VideoController videoController(filename);
     ViewController viewController(&videoController);
     
     videoController.jumpToFrameNum(0);
     
     videoController.readNextFrame();
-    Rect_<float> box = viewController.getRect();
+    Rect box = viewController.getRect();
     
     viewController.refreshCache();
     viewController.drawRect(box);
@@ -140,7 +141,7 @@ void testMF()
         
         box = medianFlow.trackBox(box, status);
         
-        if(status != MedianFlow::MEDIANFLOW_TRACK_SUCCESS)
+        if(status != MF_TRACK_SUCCESS)
         {
             videoController.readNextFrame();
             viewController.refreshCache();
