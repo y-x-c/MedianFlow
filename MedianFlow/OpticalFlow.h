@@ -13,7 +13,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-#include "SystemStruct.h"
+#include "MF_SystemStruct.h"
 
 using namespace std;
 using namespace cv;
@@ -21,11 +21,9 @@ using namespace cv;
 class OpticalFlow
 {
 private:
-    bool method;
-    
     Mat prevImg, nextImg;
     
-    ///// for OF_USE_MINE
+    ///// my own implementaion of optical flow
     
     // Size of the window centered by the traced point.
     // The value must be odd.
@@ -49,7 +47,7 @@ public:
     OpticalFlow();
     
     // prevImg & nextImg should be CV_8U | CV_8UC3
-    OpticalFlow(const Mat &prevImg, const Mat &nextImg, bool method = OF_USE_OPENCV);
+    OpticalFlow(const Mat &prevImg, const Mat &nextImg);
     
     ~OpticalFlow();
     

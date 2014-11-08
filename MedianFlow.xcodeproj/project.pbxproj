@@ -64,7 +64,7 @@
 		B927830819E3D1DB00F59D6D /* libopencv_core.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.9.dylib; path = /usr/local/Cellar/opencv/2.4.9/lib/libopencv_core.2.4.9.dylib; sourceTree = "<absolute>"; };
 		B927830919E3D1DB00F59D6D /* libopencv_contrib.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_contrib.2.4.9.dylib; path = /usr/local/Cellar/opencv/2.4.9/lib/libopencv_contrib.2.4.9.dylib; sourceTree = "<absolute>"; };
 		B927830A19E3D1DB00F59D6D /* libopencv_calib3d.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_calib3d.2.4.9.dylib; path = /usr/local/Cellar/opencv/2.4.9/lib/libopencv_calib3d.2.4.9.dylib; sourceTree = "<absolute>"; };
-		B98256D31A0DC5CE00FEDB94 /* SystemStruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemStruct.h; sourceTree = "<group>"; };
+		B98256D61A0DFE9300FEDB94 /* MF_SystemStruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MF_SystemStruct.h; sourceTree = "<group>"; };
 		B9C3F0711A00A0BB005D106D /* MedianFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MedianFlow.cpp; sourceTree = "<group>"; };
 		B9C3F0721A00A0BB005D106D /* MedianFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedianFlow.h; sourceTree = "<group>"; };
 		B9DFB93619EEB19F002D77CA /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -126,6 +126,7 @@
 		B92782F119E3CF8B00F59D6D /* MedianFlow */ = {
 			isa = PBXGroup;
 			children = (
+				B98256D61A0DFE9300FEDB94 /* MF_SystemStruct.h */,
 				B9C3F0711A00A0BB005D106D /* MedianFlow.cpp */,
 				B9C3F0721A00A0BB005D106D /* MedianFlow.h */,
 				B9DFB93619EEB19F002D77CA /* main.cpp */,
@@ -133,7 +134,6 @@
 				B9DFB93E19EFA9B1002D77CA /* VideoController.h */,
 				B9DFB94019EFA9BD002D77CA /* ViewController.cpp */,
 				B9DFB94119EFA9BD002D77CA /* ViewController.h */,
-				B98256D31A0DC5CE00FEDB94 /* SystemStruct.h */,
 			);
 			path = MedianFlow;
 			sourceTree = "<group>";

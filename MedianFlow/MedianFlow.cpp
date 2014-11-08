@@ -36,8 +36,8 @@ MedianFlow::MedianFlow(const Mat &prevImg, const Mat &nextImg, ViewController *_
     //this->prevImg.convertTo(this->prevImg, CV_32F);
     //this->nextImg.convertTo(this->nextImg, CV_32F);
     
-    opticalFlow = new OpticalFlow(this->prevImg, this->nextImg, OF_USE_OPENCV);
-    opticalFlowSwap = new OpticalFlow(this->nextImg, this->prevImg, OF_USE_OPENCV);
+    opticalFlow = new OpticalFlow(this->prevImg, this->nextImg);
+    opticalFlowSwap = new OpticalFlow(this->nextImg, this->prevImg);
     
     viewController = _viewController;
 }
@@ -137,27 +137,32 @@ void MedianFlow::filterFB(const vector<TYPE_MF_PT> &initialPts, const vector<TYP
 
 float MedianFlow::calcNCC(const cv::Mat &img0, const cv::Mat &img1)
 {
-    //    Mat vImg0, vImg1; // convert image to 1 dimension vector
-    //
-    //    vImg0 = img0.clone();
-    //    vImg1 = img1.clone();
-    //
-    //    vImg0.reshape(0, vImg0.cols * vImg0.rows);
-    //    vImg1.reshape(0, vImg1.cols * vImg1.rows);
-    //
-    //    Mat v01 = vImg0.t() * vImg1;
-    //
-    //    float norm0, norm1;
-    //
-    //    norm0 = norm(vImg0);
-    //    norm1 = norm(vImg1);
-    //
-    //    return abs(v01.at<float>(0)) / norm0 / norm1;
-    
-    Mat nccMat;
-    matchTemplate(img0, img1, nccMat, CV_TM_CCORR_NORMED);
-    
-    return nccMat.at<float>(0);
+    if(NCC_USE_OPENCV)
+    {
+        Mat nccMat;
+        matchTemplate(img0, img1, nccMat, CV_TM_CCORR_NORMED);
+        
+        return nccMat.at<float>(0);
+    }
+    else
+    {
+        Mat v0, v1; // convert image to 1 dimension vector
+        
+        img0.convertTo(v0, CV_32F);
+        img1.convertTo(v1, CV_32F);
+        
+        v0 = v0.reshape(0, v0.cols * v0.rows);
+        v1 = v1.reshape(0, v1.cols * v1.rows);
+        
+        Mat v01 = v0.t() * v1;
+        
+        float norm0, norm1;
+        
+        norm0 = norm(v0);
+        norm1 = norm(v1);
+        
+        return abs(v01.at<float>(0)) / norm0 / norm1;
+    }
 }
 
 void MedianFlow::filterNCC(const vector<TYPE_MF_PT> &initialPts, const vector<TYPE_MF_PT> &FPts, vector<int> &rejected)

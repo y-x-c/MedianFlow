@@ -13,7 +13,7 @@
 #include "ViewController.h"
 #include "OpticalFlow.h"
 #include "MedianFlow.h"
-#include "SystemStruct.h"
+#include "MF_SystemStruct.h"
 
 using namespace std;
 using namespace cv;

@@ -13,15 +13,13 @@ OpticalFlow::OpticalFlow()
 
 }
 
-OpticalFlow::OpticalFlow(const Mat &prevImg, const Mat &nextImg, bool _method)
+OpticalFlow::OpticalFlow(const Mat &prevImg, const Mat &nextImg)
 {
     assert(prevImg.type() == CV_8U || prevImg.type() == CV_8UC3);
     assert(nextImg.type() == CV_8U || nextImg.type() == CV_8UC3);
     
     // ONLY OPENCV'S OPTICAL FLOW IS AVAILABLE NOW
-    assert(_method == OF_USE_OPENCV);
-    
-    this->method = _method;
+    assert(OF_USE_OPENCV == 1);
     
     //check image size
     
@@ -38,7 +36,7 @@ OpticalFlow::OpticalFlow(const Mat &prevImg, const Mat &nextImg, bool _method)
         this->nextImg = nextImg;
         //nextImg.copyTo(this->nextImg);
 
-    if(method != OF_USE_OPENCV) preprocess();
+    if(!OF_USE_OPENCV) preprocess();
 }
 
 OpticalFlow::~OpticalFlow()
@@ -198,14 +196,13 @@ Point2f OpticalFlow::calculatePyr(const Point2f &trackPoint)
 
 void OpticalFlow::trackPts(vector<TYPE_OF_PT> &pts, vector<TYPE_OF_PT> &retPts, vector<uchar> &status)
 {
-    if(method == OF_USE_OPENCV)
+    if(OF_USE_OPENCV)
     {
         vector<float> err;
         
         calcOpticalFlowPyrLK(prevImg, nextImg, pts, retPts, status, err, Size(15, 15), 1);
     }
-
-    if(method == OF_USE_MINE)
+    else
     {
         retPts.clear();
         for(auto it : retPts)
@@ -216,19 +213,3 @@ void OpticalFlow::trackPts(vector<TYPE_OF_PT> &pts, vector<TYPE_OF_PT> &retPts, 
         }
     }
 }
-
-
-//void OpticalFlow::swapImg()
-//{
-//    if(method == OF_USE_OPENCV)
-//    {
-//        swap(prevImg, nextImg);
-//    }
-//    else{
-//        prevImgs.swap(nextImgs);
-//        for(int i = 0; i < maxLevel; i++)
-//        {
-//            Its[i] *= -1;
-//        }
-//    }
-//}

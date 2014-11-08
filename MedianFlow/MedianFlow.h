@@ -10,7 +10,7 @@
 #define __MedianFlow__MedianFlow__
 
 
-#include "SystemStruct.h"
+#include "MF_SystemStruct.h"
 
 #include "OpticalFlow.h"
 #include <iostream>
