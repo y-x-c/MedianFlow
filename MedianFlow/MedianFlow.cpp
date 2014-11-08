@@ -87,21 +87,19 @@ bool MedianFlow::isPointInside(const TYPE_MF_PT &pt, const TYPE_MF_COORD alpha)
 
 bool MedianFlow::isBoxUsable(const TYPE_MF_BB &rect)
 {
-    bool insideBr = isPointInside(rect.br()), insideTl = isPointInside(rect.tl());
     int width = prevImg.cols, height = prevImg.rows;
+ 
+    // bounding box is too large
+    if(rect.width > width || rect.height > height) return false;
     
-    if(rect.br().x < 0 || rect.br().y < 0 || rect.tl().x > width || rect.tl().y > height)
-        return false;
+    // intersection between rect and img is too small
+    TYPE_MF_COORD tlx = max((TYPE_MF_COORD)rect.tl().x, (TYPE_MF_COORD)0);
+    TYPE_MF_COORD tly = max((TYPE_MF_COORD)rect.tl().y, (TYPE_MF_COORD)0);
+    TYPE_MF_COORD brx = min((TYPE_MF_COORD)rect.br().x, (TYPE_MF_COORD)width);
+    TYPE_MF_COORD bry = min((TYPE_MF_COORD)rect.br().y, (TYPE_MF_COORD)height);
     
-    TYPE_MF_BB _rect(rect);
-    
-    if(!insideTl) _rect.tl() = TYPE_MF_PT(0, 0);
-    if(!insideBr) _rect.br() = TYPE_MF_PT(width, height);
-    
-    if(_rect.width < MF_NPTS || _rect.height < MF_NPTS)
-        return false;
-    
-    if(_rect.width > width || _rect.height > height) return false;
+    TYPE_MF_BB bb(tlx, tly, brx - tlx, bry - tly);
+    if(bb.width < MF_NPTS + 2 * MF_HALF_PATCH_SIZE || bb.height < MF_NPTS + 2 * MF_HALF_PATCH_SIZE) return false;
     
     return true;
 }
@@ -297,11 +295,9 @@ TYPE_MF_BB MedianFlow::calcRect(const TYPE_MF_BB &rect, const vector<TYPE_MF_PT>
 
 TYPE_MF_BB MedianFlow::trackBox(const TYPE_MF_BB &inputBox, int &status)
 {
-    // width and height of the inputBox should be larger than (MF_NPTS + MF_HALF_PATCH_SIZE * 2)
-
-    if(inputBox.width < MF_NPTS + MF_HALF_PATCH_SIZE * 2 || inputBox.height < MF_NPTS + MF_HALF_PATCH_SIZE * 2)
+    if(!isBoxUsable(inputBox))
     {
-        status = MF_TRACK_F_BOX_SMALL;
+        status = MF_TRACK_F_BOX;
         return BB_ERROR;
     }
     
@@ -326,7 +322,7 @@ TYPE_MF_BB MedianFlow::trackBox(const TYPE_MF_BB &inputBox, int &status)
     
     ret = calcRect(inputBox, pts, retF, rejected, status);
     
-    // show result
+    ///// show result
     if(viewController)
     {
         vector<TYPE_MF_PT> rPts, rPts2, rPts3;
@@ -346,12 +342,10 @@ TYPE_MF_BB MedianFlow::trackBox(const TYPE_MF_BB &inputBox, int &status)
         cout << "number of points after filtering:" << rPts.size() << endl;
         cout << ret << endl;
     }
-    //
+    /////
     
     if(status != MF_TRACK_SUCCESS)
     {
-        cout << "Tracking failed, error code : " << status << endl;
-        
         return BB_ERROR;
     }
     

@@ -33,7 +33,6 @@ static const int MF_TRACK_SUCCESS = 0;
 static const int MF_TRACK_F_PTS = -1; // number of points after filtering is too little
 static const int MF_TRACK_F_BOX = -2; // result box is out of bounds
 static const int MF_TRACK_F_CONFUSION = -3; // tracking result is disordered
-static const int MF_TRACK_F_BOX_SMALL = -4; // input box is too small
 
 static const int MF_REJECT_OFERROR = 1 << 0;
 static const int MF_REJECT_NCC = 1 << 1;
