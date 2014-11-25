@@ -259,7 +259,7 @@ TYPE_MF_BB MedianFlow::calcRect(const TYPE_MF_BB &rect, const vector<TYPE_MF_PT>
     
     for(int i = 0; i < size; i++)
     {
-        if(rejected[i]) continue;
+        //if(rejected[i]) continue;
         
         float dist = norm(Mat(pts[i]), Mat(FPts[i]));
         
@@ -277,7 +277,9 @@ TYPE_MF_BB MedianFlow::calcRect(const TYPE_MF_BB &rect, const vector<TYPE_MF_PT>
     }
     
     sort(absDist.begin(), absDist.end());
+    cerr << "FB :" << absDist[(int)absDist.size() / 2] << endl;
     if(absDist[(int)absDist.size() / 2] > MF_ERROR_DIST)
+    //if(medianAbsDist > 20)
     {
         status = MF_TRACK_F_CONFUSION;
         return BB_ERROR;

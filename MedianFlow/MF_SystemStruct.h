@@ -27,7 +27,7 @@ static const TYPE_MF_BB BB_ERROR = TYPE_MF_BB(PT_ERROR, PT_ERROR);
 
 static const int MF_HALF_PATCH_SIZE = 4;
 static const int MF_NPTS = 10;
-static const int MF_ERROR_DIST = 20;
+static const int MF_ERROR_DIST = 10;
 
 static const int MF_TRACK_SUCCESS = 0;
 static const int MF_TRACK_F_PTS = -1; // number of points after filtering is too little
