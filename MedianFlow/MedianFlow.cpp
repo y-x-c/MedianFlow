@@ -159,7 +159,7 @@ float MedianFlow::calcNCC(const cv::Mat &img0, const cv::Mat &img1)
         norm0 = norm(v0);
         norm1 = norm(v1);
         
-        return abs(v01.at<float>(0)) / norm0 / norm1;
+        return v01.at<float>(0) / norm0 / norm1;
     }
 }
 
